@@ -1,0 +1,55 @@
+var React = require('react');
+var {connect} = require('react-redux');
+
+import Todo from 'Todo';
+
+export var TodoList = React.createClass({
+    render: function () {
+
+        var {todos, showCompleted, searchText} = this.props;
+
+        var renderTodos = () => {
+
+            if (todos.length !== 0 && searchText !== '')
+                todos = todos.filter((todo) => {
+                    return todo.text.indexOf(searchText) > -1;
+                });
+
+
+            if (todos.length !== 0)
+                todos = todos.filter((todo) => {
+                    return (todo.completed === false || showCompleted);
+                });
+
+
+            if (todos.length === 0) {
+                return (
+                    <p className="container__message">Nothing To Do</p>
+                );
+            }
+
+            return todos.map((todo) => {
+                return (
+                    <Todo key={todo.id} {...todo} />
+                );
+            });
+        };
+
+        return (
+            <div>
+                {renderTodos()}
+            </div>
+        )
+    }
+});
+
+export default connect(
+    (state) => {
+        return {
+            showCompleted: state.showCompleted,
+            searchText: state.searchText,
+            todos: state.todos
+        }
+
+    }
+)(TodoList);
